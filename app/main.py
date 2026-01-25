@@ -7,13 +7,19 @@ import logging
 
 from app.config import settings
 from app.database import get_db, engine, Base
-from app.models import StudySession, TrialResponse, EventLog, EyeTrackingData, Trial
+from app.models import StudySession, TrialResponse, FeedbackResponse, SAMResponse, TLXResponse, EventLog, EyeTrackingData, Trial
 from app.schemas import (
     SessionCreate,
     SessionUpdate,
     SessionResponse,
     TrialResponseCreate,
     TrialResponseSchema,
+    FeedbackResponseCreate,
+    FeedbackResponseSchema,
+    SAMResponseCreate,
+    SAMResponseSchema,
+    TLXResponseCreate,
+    TLXResponseSchema,
     EventLogCreate,
     EventLogSchema,
     EyeTrackingDataCreate,
@@ -135,7 +141,9 @@ async def create_trial_response(
     
     db_response = TrialResponse(
         session_id=response.session_id,
+        participant_id=response.participant_id,
         trial_id=response.trial_id,
+        question_number=response.question_number,
         selected_option=response.selected_option,
         stimulus_start_time=response.stimulus_start_time,
         answer_time=response.answer_time,
@@ -143,6 +151,83 @@ async def create_trial_response(
         cross_start_time=response.cross_start_time,
         cross_end_time=response.cross_end_time,
         response_time=response.response_time,
+        timestamp=response.timestamp,
+    )
+    db.add(db_response)
+    db.commit()
+    db.refresh(db_response)
+    return db_response
+
+
+@app.post("/api/feedback-responses", response_model=FeedbackResponseSchema)
+async def create_feedback_response(
+    response: FeedbackResponseCreate, db: DBSession = Depends(get_db)
+):
+    """Save a feedback response"""
+    # Verify session exists
+    session = db.query(StudySession).filter(StudySession.session_id == response.session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    db_response = FeedbackResponse(
+        session_id=response.session_id,
+        participant_id=response.participant_id,
+        trial_id=response.trial_id,
+        question_id=response.question_id,
+        mental_effort=response.mental_effort,
+        confidence=response.confidence,
+        familiarity=response.familiarity,
+        timestamp=response.timestamp,
+    )
+    db.add(db_response)
+    db.commit()
+    db.refresh(db_response)
+    return db_response
+
+
+@app.post("/api/sam-responses", response_model=SAMResponseSchema)
+async def create_sam_response(
+    response: SAMResponseCreate, db: DBSession = Depends(get_db)
+):
+    """Save a SAM response"""
+    # Verify session exists
+    session = db.query(StudySession).filter(StudySession.session_id == response.session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    db_response = SAMResponse(
+        session_id=response.session_id,
+        participant_id=response.participant_id,
+        pleasure=response.pleasure,
+        arousal=response.arousal,
+        dominance=response.dominance,
+        timestamp=response.timestamp,
+    )
+    db.add(db_response)
+    db.commit()
+    db.refresh(db_response)
+    return db_response
+
+
+@app.post("/api/tlx-responses", response_model=TLXResponseSchema)
+async def create_tlx_response(
+    response: TLXResponseCreate, db: DBSession = Depends(get_db)
+):
+    """Save a NASA-TLX response"""
+    # Verify session exists
+    session = db.query(StudySession).filter(StudySession.session_id == response.session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    db_response = TLXResponse(
+        session_id=response.session_id,
+        participant_id=response.participant_id,
+        mental_demand=response.mental_demand,
+        physical_demand=response.physical_demand,
+        temporal_demand=response.temporal_demand,
+        performance=response.performance,
+        effort=response.effort,
+        frustration=response.frustration,
         timestamp=response.timestamp,
     )
     db.add(db_response)

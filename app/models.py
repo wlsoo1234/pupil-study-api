@@ -17,6 +17,9 @@ class StudySession(Base):
     
     # Relationships
     trial_responses = relationship("TrialResponse", back_populates="session", cascade="all, delete-orphan")
+    feedback_responses = relationship("FeedbackResponse", back_populates="session", cascade="all, delete-orphan")
+    sam_responses = relationship("SAMResponse", back_populates="session", cascade="all, delete-orphan")
+    tlx_responses = relationship("TLXResponse", back_populates="session", cascade="all, delete-orphan")
     event_logs = relationship("EventLog", back_populates="session", cascade="all, delete-orphan")
     eye_tracking_data = relationship("EyeTrackingData", back_populates="session", cascade="all, delete-orphan")
 
@@ -26,7 +29,9 @@ class TrialResponse(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     session_id = Column(String(100), ForeignKey("study_sessions.session_id", ondelete="CASCADE"), nullable=False, index=True)
+    participant_id = Column(String(100), nullable=False, index=True)
     trial_id = Column(Integer, nullable=False, index=True)
+    question_number = Column(Integer, nullable=False)
     selected_option = Column(String(10), nullable=False)
     stimulus_start_time = Column(BigInteger, nullable=False)
     answer_time = Column(BigInteger, nullable=False)
@@ -39,6 +44,59 @@ class TrialResponse(Base):
     
     # Relationships
     session = relationship("StudySession", back_populates="trial_responses")
+
+
+class FeedbackResponse(Base):
+    __tablename__ = "feedback_responses"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(100), ForeignKey("study_sessions.session_id", ondelete="CASCADE"), nullable=False, index=True)
+    participant_id = Column(String(100), nullable=False, index=True)
+    trial_id = Column(Integer, nullable=False, index=True)
+    question_id = Column(Integer, nullable=False)
+    mental_effort = Column(Integer, nullable=False)
+    confidence = Column(Integer, nullable=False)
+    familiarity = Column(Integer, nullable=False)
+    timestamp = Column(BigInteger, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.current_timestamp())
+    
+    # Relationships
+    session = relationship("StudySession", back_populates="feedback_responses")
+
+
+class SAMResponse(Base):
+    __tablename__ = "sam_responses"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(100), ForeignKey("study_sessions.session_id", ondelete="CASCADE"), nullable=False, index=True)
+    participant_id = Column(String(100), nullable=False, index=True)
+    pleasure = Column(Integer, nullable=False)
+    arousal = Column(Integer, nullable=False)
+    dominance = Column(Integer, nullable=False)
+    timestamp = Column(BigInteger, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.current_timestamp())
+    
+    # Relationships
+    session = relationship("StudySession", back_populates="sam_responses")
+
+
+class TLXResponse(Base):
+    __tablename__ = "tlx_responses"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(100), ForeignKey("study_sessions.session_id", ondelete="CASCADE"), nullable=False, index=True)
+    participant_id = Column(String(100), nullable=False, index=True)
+    mental_demand = Column(Integer, nullable=False)
+    physical_demand = Column(Integer, nullable=False)
+    temporal_demand = Column(Integer, nullable=False)
+    performance = Column(Integer, nullable=False)
+    effort = Column(Integer, nullable=False)
+    frustration = Column(Integer, nullable=False)
+    timestamp = Column(BigInteger, nullable=False)
+    created_at = Column(TIMESTAMP, server_default=func.current_timestamp())
+    
+    # Relationships
+    session = relationship("StudySession", back_populates="tlx_responses")
 
 
 class EventLog(Base):

@@ -4,6 +4,8 @@ from typing import Optional, List, Any
 
 class TrialResponseSchema(BaseModel):
     trial_id: int
+    participant_id: str
+    question_number: int
     selected_option: str
     stimulus_start_time: int
     answer_time: int
@@ -42,7 +44,9 @@ class SessionResponse(BaseModel):
 
 class TrialResponseCreate(BaseModel):
     session_id: str
+    participant_id: str
     trial_id: int
+    question_number: int
     selected_option: str
     stimulus_start_time: int
     answer_time: int
@@ -50,6 +54,82 @@ class TrialResponseCreate(BaseModel):
     cross_start_time: int
     cross_end_time: int
     response_time: int
+    timestamp: int
+
+
+class FeedbackResponseSchema(BaseModel):
+    id: int
+    session_id: str
+    participant_id: str
+    trial_id: int
+    question_id: int
+    mental_effort: int
+    confidence: int
+    familiarity: int
+    timestamp: int
+
+    class Config:
+        from_attributes = True
+
+
+class FeedbackResponseCreate(BaseModel):
+    session_id: str
+    participant_id: str
+    trial_id: int
+    question_id: int
+    mental_effort: int
+    confidence: int
+    familiarity: int
+    timestamp: int
+
+
+class SAMResponseSchema(BaseModel):
+    id: int
+    session_id: str
+    participant_id: str
+    pleasure: int
+    arousal: int
+    dominance: int
+    timestamp: int
+
+    class Config:
+        from_attributes = True
+
+
+class SAMResponseCreate(BaseModel):
+    session_id: str
+    participant_id: str
+    pleasure: int
+    arousal: int
+    dominance: int
+    timestamp: int
+
+
+class TLXResponseSchema(BaseModel):
+    id: int
+    session_id: str
+    participant_id: str
+    mental_demand: int
+    physical_demand: int
+    temporal_demand: int
+    performance: int
+    effort: int
+    frustration: int
+    timestamp: int
+
+    class Config:
+        from_attributes = True
+
+
+class TLXResponseCreate(BaseModel):
+    session_id: str
+    participant_id: str
+    mental_demand: int
+    physical_demand: int
+    temporal_demand: int
+    performance: int
+    effort: int
+    frustration: int
     timestamp: int
 
 
