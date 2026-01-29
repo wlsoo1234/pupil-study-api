@@ -57,6 +57,7 @@ origins = [
     "http://127.0.0.1:3000",
     "http://192.168.100.9:3000",
     "http://0.0.0.0:3000", 
+    "https://pupil-study.vercel.app",
 ]
 # Add configured origins
 origins.extend(settings.cors_origins_list)
