@@ -28,6 +28,7 @@ class SessionCreate(BaseModel):
 
 class SessionUpdate(BaseModel):
     completed: Optional[bool] = None
+    end_time: Optional[int] = None
 
 
 class SessionResponse(BaseModel):
@@ -35,6 +36,7 @@ class SessionResponse(BaseModel):
     session_id: str
     participant_id: str
     start_time: int
+    end_time: Optional[int] = None
     completed: bool
     trial_responses: List[TrialResponseSchema] = []
 

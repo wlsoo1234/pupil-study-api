@@ -125,6 +125,9 @@ async def update_session(
     if session_update.completed is not None:
         session.completed = session_update.completed
     
+    if session_update.end_time is not None:
+        session.end_time = session_update.end_time
+    
     db.commit()
     db.refresh(session)
     return session

@@ -11,6 +11,7 @@ class StudySession(Base):
     session_id = Column(String(100), unique=True, index=True, nullable=False)
     participant_id = Column(String(100), nullable=False, index=True)
     start_time = Column(BigInteger, nullable=False)
+    end_time = Column(BigInteger, nullable=True)
     completed = Column(Boolean, default=False)
     created_at = Column(TIMESTAMP, server_default=func.current_timestamp())
     updated_at = Column(TIMESTAMP, server_default=func.current_timestamp(), onupdate=func.current_timestamp())
