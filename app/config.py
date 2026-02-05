@@ -18,11 +18,13 @@ class Settings(BaseSettings):
     def database_url(self) -> str:
         # URL-encode the password to handle special characters like @
         encoded_password = quote_plus(self.db_password)
-        return f"mysql+pymysql://{self.db_user}:{encoded_password}@{self.db_host}/{self.db_name}"
+        return f"mysql+pymysql://{self.db_user}:{encoded_password}@{self.db_host}:{self.db_port}/{self.db_name}"
     
     @property
     def cors_origins_list(self) -> List[str]:
-        return [origin.strip() for origin in self.cors_origins.split(",")]
+        # return [origin.strip() for origin in self.cors_origins.split(",")]
+        return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
 
 
 settings = Settings()
